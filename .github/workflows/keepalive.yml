@@ -12,8 +12,12 @@ jobs:
   keepalive:
     runs-on: ubuntu-latest
     permissions:
-      actions: write
+      contents: write    # 允许 GitHub Actions 往仓库推送
+      actions: write     # （可选）允许它改 workflow，本例保留
+    
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ github.token }}
       - uses: gautamkrishnar/keepalive-workflow@v2
         # 默认在距离上次提交 ≥45 天时，用 API 方式制造一次“活动”，不会污染提交历史
