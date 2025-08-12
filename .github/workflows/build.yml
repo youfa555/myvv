@@ -1,0 +1,28 @@
+name: Build subscription
+
+on:
+  schedule:
+    # 每3小时运行一次（UTC 时间）。你可改为每6小时："0 */6 * * *"
+    - cron: "0 */3 * * *"
+  workflow_dispatch: {}  # 允许手动触发
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install requests beautifulsoup4
+      - run: python fetch_and_build.py
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/
+          git commit -m "Update subscription [skip ci]" || echo "No changes"
+          git push
