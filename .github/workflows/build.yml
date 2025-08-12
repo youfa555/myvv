@@ -3,7 +3,7 @@ name: Build subscription
 on:
   schedule:
     # 每3小时运行一次（UTC 时间）。你可改为每6小时："0 */6 * * *"
-    - cron: "0 */3 * * *"
+    - cron: "7 */3 * * *"
   workflow_dispatch: {}  # 允许手动触发
 
 permissions:
