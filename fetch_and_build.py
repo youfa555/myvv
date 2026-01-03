@@ -1,5 +1,5 @@
 # fetch_and_build.py
-import base64, re, requests, time, html
+import os, argparse, base64, re, requests, time, html
 from bs4 import BeautifulSoup
 from collections import OrderedDict
 
@@ -83,8 +83,16 @@ def extract_nodes_from_html(html_text: str):
 
     return uniq
 
+def get_source():
+    """返回抓取源：优先使用命令行 `--src`，其次使用环境变量 `SRC_OVERRIDE`，最后使用默认 `SRC`。"""
+    parser = argparse.ArgumentParser(add_help=False)
+    parser.add_argument('--src', help='override source URL')
+    args, _ = parser.parse_known_args()
+    return args.src or os.getenv('SRC_OVERRIDE') or SRC
+
 def main():
-    r = requests.get(SRC, headers={"User-Agent": UA}, timeout=30)
+    src = get_source()
+    r = requests.get(src, headers={"User-Agent": UA}, timeout=30)
     r.raise_for_status()
     html_text = r.text
 
