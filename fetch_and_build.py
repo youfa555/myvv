@@ -9,20 +9,18 @@ UA  = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like
 # 支持的协议
 SCHEMES = ("vmess","vless","trojan","ssr","ss","hysteria2","hy2","hysteria")
 
-# URL 内允许的字符集合（修改为允许 Unicode，仅排除 HTML 关键字符和空白）
-# 排除：\s (空白), < > (HTML标签), " ' (属性引号)
-# 这样可以匹配中文、Emoji 等特殊字符的 Fragment
-URL_SAFE_CHARS = r'[^\s<>"' + "'" + r']'
+# URL 内允许的字符集合（RFC3986 常见安全字符 + 一些常见扩展）
+URL_SAFE_CHARS = r"A-Za-z0-9\-._~:/?#\[\]@!$&'()*+,;=%"
 
 # 从可视文本中“跨行”提取，匹配时允许出现换行和空白，提取后再把空白移除
 URI_TXT_RE = re.compile(
-    r'((?:' + "|".join(SCHEMES) + r')://(?:' + URL_SAFE_CHARS + r'|\s)+)',
+    r'((?:' + "|".join(SCHEMES) + r')://(?:[' + URL_SAFE_CHARS + r']|\s)+)',
     re.IGNORECASE
 )
 
-# href 中的链接通常更干净（但 GitHub 可能会截断），这里同样放宽限制
+# href 中的链接通常更干净（但 GitHub 可能会截断），按传统“非空白非尖括号”提取
 URI_HREF_RE = re.compile(
-    r'^(?:' + "|".join(SCHEMES) + r')://' + URL_SAFE_CHARS + r'+$',
+    r'^(?:' + "|".join(SCHEMES) + r')://[' + URL_SAFE_CHARS + r']+$',
     re.IGNORECASE
 )
 
